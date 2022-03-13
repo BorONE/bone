@@ -1,0 +1,107 @@
+#!/bin/bash
+
+OUTPUT_FILE="exe_name"
+
+function print_help {
+  echo -e "Usage: run [OPTION]... SOURCE_FILE [ARG]..."
+  echo -e 'Run source file.'
+  echo
+
+  echo -e 'Possible options: (expected amount of arguments is shown [inside brackets])'
+
+  echo -e '  -c, --contest          [1] set contest folder'
+  echo -e '  -o, --output           [1] keep output file and set output filename'
+  echo -e '      --override             override file if already exists'
+}
+
+# handle empty
+if [[ $# -eq 0 ]]; then
+  print_help
+  exit 0
+fi
+
+# parse
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --help)
+      print_help
+      exit 0
+      ;;
+
+    -c|--contest)
+      CONTEST=$2
+      shift
+      shift
+      ;;
+
+    -o|--output)
+      KEEP=YES
+      OUTPUT_FILE=$2
+      shift
+      shift
+      ;;
+
+    --override)
+      OVERRIDE=YES
+      shift
+      ;;
+
+    -*|--*)
+      echo "Unknown option $1"
+      exit 1
+      ;;
+    *)
+      SOURCE_FILE=$1
+      break
+      ;;
+  esac
+done
+
+# collect args
+while [[ $# -gt 0 ]]; do
+  ARGS="$ARGS $1"
+  shift
+done
+
+# handle contest
+if [ ! -z $CONTEST ]; then
+  if [ ! -d $CONTEST ]; then
+      echo $CONTEST is not a directory
+      exit 1
+  fi
+
+  cd $CONTEST
+fi
+
+# handle override
+if [[ $OVERRIDE != YES ]] && [ -e $OUTPUT_FILE ]; then
+  echo "'$OUTPUT_FILE' already exists. To override use --override option."
+  exit 1
+fi
+
+# handle bad input
+if [ -z "$SOURCE_FILE" ]; then
+  echo "SOURCE_FILE is empty."
+  exit 1
+fi
+
+if [ -z "$OUTPUT_FILE" ]; then
+  echo "OUTPUT_FILE is empty."
+  exit 1
+fi
+
+
+gcc $SOURCE_FILE -o $OUTPUT_FILE
+
+# handle compile error
+if [[ $? -ne 0 ]]; then 
+  echo -e '\e[031m'"Errors occured. Look above."'\e[0m'
+  exit 1
+fi
+
+./$OUTPUT_FILE $ARGS
+
+# handle keep
+if [[ $KEEP != YES ]]; then 
+  rm $OUTPUT_FILE
+fi

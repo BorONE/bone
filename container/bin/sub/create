@@ -1,0 +1,96 @@
+#!/bin/bash
+
+START_CODE=DEFAULT
+
+function print_help {
+  echo -e "Usage: create [OPTION]... SOURCE_FILE"
+  echo -e 'Create source file.'
+  echo
+
+  echo -e 'Possible options: (expected amount of arguments is shown inside [brackets])'
+
+  echo -e '  -c, --contest          [1] set contest folder'
+  echo -e '      --from             [1] copy code from file'
+  echo -e '      --override             override file if already exists'
+}
+
+# handle empty
+if [[ $# -eq 0 ]]; then 
+  print_help
+  exit 0
+fi
+
+# parse
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --help)
+      print_help
+      exit 0
+      ;;
+
+    -c|--contest)
+      CONTEST=$2
+      shift
+      shift
+      ;;
+
+    --from)
+      START_CODE=COPY
+      COPY_FROM_SOURCE="$2"
+      shift
+      shift
+      ;;
+
+    --override)
+      OVERRIDE=YES
+      shift
+      ;;
+
+    -*|--*)
+      echo "Unknown option $1"
+      exit 1
+      ;;
+    *)
+      SOURCE_FILE=$1
+      break
+      ;;
+  esac
+done
+
+# handle contest
+if [ ! -z "$CONTEST" ]; then
+  mkdir -p $CONTEST
+
+  if [ ! -d $CONTEST ]; then
+    echo "$CONTEST is not a directory"
+    exit 1
+  fi
+
+  cd $CONTEST
+fi
+
+# handle bad input
+if [ -z "$SOURCE_FILE" ]; then
+  echo "SOURCE_FILE is empty."
+  exit 1
+fi
+
+# handle override
+if [[ $OVERRIDE != YES ]] && [ -e $SOURCE_FILE ]; then
+  echo "'$SOURCE_FILE' already exists. To override use --override option."
+  exit 1
+fi
+
+
+case $START_CODE in
+  DEFAULT)
+    echo 'int main(int argc, char* argv[])' > $SOURCE_FILE
+    echo '{' >> $SOURCE_FILE
+    echo '}' >> $SOURCE_FILE
+    ;;
+  COPY)
+    cp $COPY_FROM_SOURCE $SOURCE_FILE
+    shift
+    shift
+    ;;
+esac

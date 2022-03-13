@@ -1,0 +1,25 @@
+#!/bin/bash
+
+
+function print_help {
+  echo -e "Usage: bone COMMAND"
+  echo -e 'Run command'
+  echo
+
+  echo -e 'Commands:'
+  echo -e ' create'
+  echo -e ' green'
+  echo -e ' run'
+  echo -e ' test'
+}
+
+# handle empty
+if [[ $# -eq 0 ]]; then
+  print_help
+  exit 0
+fi
+
+BIN_PATH=/home/acos/bin
+
+# hardcode is bad, but whatever
+$BIN_PATH/sub/$@

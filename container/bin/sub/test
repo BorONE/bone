@@ -1,0 +1,3 @@
+#!/bin/bash
+
+echo -e "If you see this, then at least something is working"
