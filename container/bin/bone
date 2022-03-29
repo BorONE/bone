@@ -1,15 +1,14 @@
 #!/bin/bash
 
-
 function print_help {
-  echo -e "Usage: bone COMMAND"
+  echo -e "Usage: bone COMMAND [ARG]..."
   echo -e 'Run command'
   echo
 
   echo -e 'Commands:'
   echo -e ' create'
-  echo -e ' green'
   echo -e ' run'
+  echo -e ' green'
   echo -e ' test'
 }
 
@@ -19,7 +18,5 @@ if [[ $# -eq 0 ]]; then
   exit 0
 fi
 
-BIN_PATH=/home/acos/bin
-
 # hardcode is bad, but whatever
-$BIN_PATH/sub/$@
+/acos/bin/sub/$@

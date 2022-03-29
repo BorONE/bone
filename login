@@ -11,7 +11,8 @@ docker inspect $container_name &> /dev/null \
         -d \
         --name $container_name \
         -it \
-        -v "$(pwd)"/container:/acos $image_name &> /dev/null\
-    && docker start $container_name &> /dev/null\
+        -v "$(pwd)"/container/:/acos/ \
+        $image_name &> /dev/null \
+    && docker start $container_name &> /dev/null
 
 docker exec -w /acos/ -it $container_name bash

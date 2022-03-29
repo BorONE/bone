@@ -1,5 +1,12 @@
 #!/bin/bash
 
+if [ ! -d tasks ]; then
+  echo "No 'tasks' directory!"
+  exit 1
+fi
+
+cd tasks
+
 OUTPUT_FILE="exe_name"
 
 function print_help {
@@ -9,6 +16,7 @@ function print_help {
 
   echo -e 'Possible options: (expected amount of arguments is shown [inside brackets])'
 
+  # echo -e '   -, --                 [1] pass option to complier'
   echo -e '  -c, --contest          [1] set contest folder'
   echo -e '  -o, --output           [1] keep output file and set output filename'
   echo -e '      --override             override file if already exists'
@@ -46,12 +54,18 @@ while [[ $# -gt 0 ]]; do
       shift
       ;;
 
+    -|--)
+      COMPILER_OPTIONS="$COMPILER_OPTIONS $2"
+      shift
+      shift
+      ;;
     -*|--*)
       echo "Unknown option $1"
       exit 1
       ;;
     *)
       SOURCE_FILE=$1
+      shift
       break
       ;;
   esac
@@ -90,8 +104,12 @@ if [ -z "$OUTPUT_FILE" ]; then
   exit 1
 fi
 
+# update SOURCE_FILE
+echo >> $SOURCE_FILE
+sed -i '$ d' $SOURCE_FILE
 
-gcc $SOURCE_FILE -o $OUTPUT_FILE
+# compilation
+gcc $COMPILER_OPTIONS $SOURCE_FILE -o $OUTPUT_FILE
 
 # handle compile error
 if [[ $? -ne 0 ]]; then 

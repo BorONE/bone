@@ -1,5 +1,15 @@
 #!/bin/bash
 
+mkdir -p tasks
+
+if [ ! -d tasks ]; then
+  echo "No 'tasks' directory!"
+  echo "Propably file with name 'tasks' already exists and it is not a directory."
+  exit 1
+fi
+
+cd tasks
+
 START_CODE=DEFAULT
 
 function print_help {
