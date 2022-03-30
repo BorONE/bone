@@ -11,6 +11,7 @@ fi
 cd tasks
 
 START_CODE=DEFAULT
+EDIT=NO
 
 function print_help {
   echo -e "Usage: create [OPTION]... SOURCE_FILE"
@@ -20,6 +21,7 @@ function print_help {
   echo -e 'Possible options: (expected amount of arguments is shown inside [brackets])'
 
   echo -e '  -c, --contest          [1] set contest folder'
+  echo -e '  -e, --edit                 edit created file'
   echo -e '      --from             [1] copy code from file'
   echo -e '      --override             override file if already exists'
 }
@@ -53,6 +55,11 @@ while [[ $# -gt 0 ]]; do
 
     --override)
       OVERRIDE=YES
+      shift
+      ;;
+
+    -e|--edit)
+      EDIT=YES
       shift
       ;;
 
@@ -104,3 +111,14 @@ case $START_CODE in
     shift
     ;;
 esac
+
+# handle edit
+if [[ $EDIT == YES ]]; then
+  if [ -z "$CONTEST" ]; then
+    cd ..
+    bone edit $SOURCE_FILE
+  else
+    cd ../..
+    bone edit --contest $CONTEST $SOURCE_FILE
+  fi
+fi
