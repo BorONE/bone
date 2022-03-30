@@ -18,6 +18,7 @@ function print_help {
 
   echo -e '   -, --                 [1] pass option to complier'
   echo -e '  -c, --contest          [1] set contest folder'
+  echo -e '  -C, --current-contest      set contest folder from config'
   echo -e '  -o, --output           [1] keep output file and set output filename'
   echo -e '      --override             override file if already exists'
 }
@@ -39,6 +40,11 @@ while [[ $# -gt 0 ]]; do
     -c|--contest)
       CONTEST=$2
       shift
+      shift
+      ;;
+
+    -C|--current-contest)
+      CONTEST=$(bone contest --get)
       shift
       ;;
 

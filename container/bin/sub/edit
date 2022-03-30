@@ -10,12 +10,13 @@ cd tasks
 
 function print_help {
   echo -e "Usage: edit [OPTION]... SOURCE_FILE"
-  echo -e 'Run source file.'
+  echo -e 'Edit source file.'
   echo
 
   echo -e 'Possible options: (expected amount of arguments is shown [inside brackets])'
 
   echo -e '  -c, --contest          [1] set contest folder'
+  echo -e '  -C, --current-contest      set contest folder from config'
 }
 
 # handle empty
@@ -35,6 +36,11 @@ while [[ $# -gt 0 ]]; do
     -c|--contest)
       CONTEST=$2
       shift
+      shift
+      ;;
+
+    -C|--current-contest)
+      CONTEST=$(bone contest --get)
       shift
       ;;
 
@@ -67,7 +73,6 @@ if [ -z "$SOURCE_FILE" ]; then
   exit 1
 fi
 
-ls
 if [ ! -e "$SOURCE_FILE" ]; then
   echo "'$SOURCE_FILE' does not exist."
   exit 1

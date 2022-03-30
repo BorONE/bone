@@ -1,0 +1,56 @@
+#!/bin/bash
+
+CONFIG="/bin/confing.cfg"
+
+function print_help {
+  echo -e "Usage: contest [OPTION]..."
+  echo -e 'Interaction with config field CONTEST.'
+  echo
+
+  echo -e 'Possible options: (expected amount of arguments is shown inside [brackets])'
+
+  echo -e '  -s, --set              [1] set current contest '
+  echo -e '  -g, --get                  get current contest'
+}
+
+# handle empty
+if [[ $# -eq 0 ]]; then 
+  print_help
+  exit 0
+fi
+
+# init config
+if [ ! -e "${CONFIG}" ] ; then
+    > $CONFIG
+    echo "CONTEST=" >> $CONFIG
+fi
+
+# parse
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --help)
+      print_help
+      exit 0
+      ;;
+
+    -s|--set)
+      shift
+      sudo sed -i "s/^\(CONTEST\s*=\s*\).*\$/\1$1/" $CONFIG
+      shift
+      ;;
+    -g|--get)
+      shift
+      source $CONFIG
+      echo $CONTEST
+      ;;
+
+    -*|--*)
+      echo "Unknown option $1"
+      exit 1
+      ;;
+    *)
+      echo "Argument without option $1"
+      exit 1
+      ;;
+  esac
+done
